@@ -6,7 +6,7 @@ import {
   useContractReader,
   useGasPrice,
   useOnBlock,
-  useUserProviderAndSigner,
+  useUserProviderAndSigner
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,21 +16,21 @@ import {
   Account,
   Contract,
   Faucet,
+  FaucetHint,
   GasGauge,
   Header,
-  Ramp,
-  ThemeSwitch,
   NetworkDisplay,
-  FaucetHint,
   NetworkSwitch,
+  Ramp,
+  ThemeSwitch
 } from "./components";
-import { NETWORKS, ALCHEMY_KEY } from "./constants";
+import { ALCHEMY_KEY, NETWORKS } from "./constants";
 import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
+import { ExampleUI, Hints, Home, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -53,7 +53,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.mainnet; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -75,6 +75,9 @@ function App(props) {
   // reference './constants.js' for other networks
   const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
 
+  const [encrytpedMessage, setEncrytpedMessage] = useState();
+  const [encryptedFile, setEncryptedFile] = useState();
+  const [encryptedSymmetricKey, setEncryptedSymmetricKey] = useState();
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);

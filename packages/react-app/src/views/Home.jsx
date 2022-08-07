@@ -1,7 +1,7 @@
+import { Button } from "antd";
 import { useContractReader } from "eth-hooks";
-import { ethers } from "ethers";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import Lit from "../helpers/lit";
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -13,109 +13,62 @@ function Home({ yourLocalBalance, readContracts }) {
   // you can also use hooks locally in your component of choice
   // in this case, let's keep track of 'purpose' variable from our contract
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  const [encrytpedMessage, setEncrytpedMessage] = useState();
+  const [message, setMessage] = useState();
+  const [encryptedFile, setEncryptedFile] = useState();
+  const [encryptedSymmetricKey, setEncryptedSymmetricKey] = useState();
+
+  // Lit Encrypt
+  const litProtocolEncrypt = async () => {
+    await Lit.encryptString(JSON.stringify(message)).then(result => {
+      console.log("Encryption of message result: ", result);
+      setEncryptedFile(result.encryptedFile);
+      setEncryptedSymmetricKey(result.encryptedSymmetricKey);
+      console.log("Encrypted Message: ", result.encryptedFile);
+    });
+  };
+
+  // Lit Decrypt
+  const litProtocolDecrypt = async () => {
+    console.log("Decrypting from Lit");
+    let decryptedFile = await Lit.decryptString(encryptedFile, encryptedSymmetricKey);
+    console.log("Decrypted key: ", JSON.parse(decryptedFile));
+    document.getElementById("decrypted-key").innerHTML = "Decrypted key: " + JSON.parse(decryptedFile).alg;
+  };
+
+  const encryptMessage = async () => {
+    await litProtocolEncrypt();
+  };
+
+  const decryptMessage = async () => {
+    await litProtocolDecrypt();
+  };
+
+  const btnStyle = {
+    padding: "5px",
+  };
+
+  const inputStyle = {
+    padding: "5px",
+  };
 
   return (
-    <div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>📝</span>
-        This Is Your App Home. You can start editing it in{" "}
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          packages/react-app/src/views/Home.jsx
-        </span>
-      </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>✏️</span>
-        Edit your smart contract{" "}
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          YourContract.sol
-        </span>{" "}
-        in{" "}
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          packages/hardhat/contracts
-        </span>
-      </div>
-      {!purpose ? (
-        <div style={{ margin: 32 }}>
-          <span style={{ marginRight: 8 }}>👷‍♀️</span>
-          You haven't deployed your contract yet, run
-          <span
-            className="highlight"
-            style={{
-              marginLeft: 4,
-              /* backgroundColor: "#f9f9f9", */ padding: 4,
-              borderRadius: 4,
-              fontWeight: "bolder",
-            }}
-          >
-            yarn chain
-          </span>{" "}
-          and{" "}
-          <span
-            className="highlight"
-            style={{
-              marginLeft: 4,
-              /* backgroundColor: "#f9f9f9", */ padding: 4,
-              borderRadius: 4,
-              fontWeight: "bolder",
-            }}
-          >
-            yarn deploy
-          </span>{" "}
-          to deploy your first contract!
-        </div>
-      ) : (
-        <div style={{ margin: 32 }}>
-          <span style={{ marginRight: 8 }}>🤓</span>
-          The "purpose" variable from your contract is{" "}
-          <span
-            className="highlight"
-            style={{
-              marginLeft: 4,
-              /* backgroundColor: "#f9f9f9", */ padding: 4,
-              borderRadius: 4,
-              fontWeight: "bolder",
-            }}
-          >
-            {purpose}
-          </span>
-        </div>
-      )}
-
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>🤖</span>
-        An example prop of your balance{" "}
-        <span style={{ fontWeight: "bold", color: "green" }}>({ethers.utils.formatEther(yourLocalBalance)})</span> was
-        passed into the
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          Home.jsx
-        </span>{" "}
-        component from
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          App.jsx
-        </span>
-      </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>💭</span>
-        Check out the <Link to="/hints">"Hints"</Link> tab for more tips.
-      </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>🛠</span>
-        Tinker with your smart contract using the <Link to="/debug">"Debug Contract"</Link> tab.
+    <div className="">
+      <div className="App-body">
+        <h2>Lit 🔥 Protocol Starter/Example</h2>
+        <br />
+        <input style={inputStyle} value={message} type="text" onChange={e => setMessage(e.target.value)} />
+        <span>{message}</span>
+        <br />
+        <Button style={btnStyle} onClick={() => encryptMessage()}>
+          Save to Lit 🔥
+        </Button>
+        <span id="lit-saved"></span>
+        <br />
+        <Button style={btnStyle} onClick={() => decryptMessage()}>
+          Decrypt Message
+        </Button>
+        <span id="decrypted-pii"></span>
       </div>
     </div>
   );
