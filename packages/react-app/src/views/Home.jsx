@@ -10,10 +10,6 @@ import Lit from "../helpers/lit";
  * @returns react component
  **/
 function Home({ yourLocalBalance, readContracts }) {
-  // you can also use hooks locally in your component of choice
-  // in this case, let's keep track of 'purpose' variable from our contract
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
-  const [encrytpedMessage, setEncrytpedMessage] = useState();
   const [message, setMessage] = useState();
   const [encryptedFile, setEncryptedFile] = useState();
   const [encryptedSymmetricKey, setEncryptedSymmetricKey] = useState();
@@ -32,8 +28,8 @@ function Home({ yourLocalBalance, readContracts }) {
   const litProtocolDecrypt = async () => {
     console.log("Decrypting from Lit");
     let decryptedFile = await Lit.decryptString(encryptedFile, encryptedSymmetricKey);
-    console.log("Decrypted key: ", JSON.parse(decryptedFile));
-    document.getElementById("decrypted-key").innerHTML = "Decrypted key: " + JSON.parse(decryptedFile).alg;
+    console.log("Decrypted message: ", JSON.parse(decryptedFile));
+    document.getElementById("decrypted-message").innerHTML = "Decrypted message: " + JSON.parse(decryptedFile).alg;
   };
 
   const encryptMessage = async () => {
@@ -68,7 +64,7 @@ function Home({ yourLocalBalance, readContracts }) {
         <Button style={btnStyle} onClick={() => decryptMessage()}>
           Decrypt Message
         </Button>
-        <span id="decrypted-pii"></span>
+        <span id="decrypted-message"></span>
       </div>
     </div>
   );
